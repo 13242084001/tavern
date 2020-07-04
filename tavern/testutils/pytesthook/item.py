@@ -13,6 +13,7 @@ from tavern.util import exceptions
 
 from .error import ReprdError
 from .util import load_global_cfg
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +105,14 @@ class YamlItem(pytest.Item):
                         " be a list of fixture names)"
                     )
                     continue
+
+            if "dependency" in pm.name:
+                if "dependency" == pm.name:
+                    pm.mark = pytest.mark.dependency()
+              	else:
+                    mark_attr = pm.name.split(":", 1)
+                    depends_val = json.loads(mark_attr[1])
+                    pm.mark = pytest.mark.dependency(depends=depends_val, scope="session")
 
             self.add_marker(pm)
 
